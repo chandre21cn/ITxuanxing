@@ -6,20 +6,20 @@ define(function (require) {
     /*
      * 提示信息
      */
-    var __alertTips = function(options) {
+    var alertTips = function(options) {
         var defaults = {
             'msg'       :  "操作成功！",
             'close'     : true
         };
         opt = $.extend(true, {}, defaults, options);
-        require.async(['$','dialog'],function(dialog){
-            var __alertMsg = dialog({       //弹出消息提示
+        require.async(['dialog'],function(dialog){
+            var alertMsg = dialog({       //弹出消息提示
                 width: 200,
                 cancel: false,
-                content: '<div style="text-align:center">'+ opt.msg +'</div>'
-            }).showModal()
+                content: '<div style=\"text-align:center;font-size:14px;\">'+ opt.msg +'</div>'
+            }).showModal();
             if (opt.close==true) {
-                setTimeout(function () {__alertMsg.remove()},2000);
+                setTimeout(function () {alertMsg.remove()},2000);
             }
         });
     };
@@ -27,7 +27,7 @@ define(function (require) {
     //表单验证
     $(function(){
         if ( $("[data-validate='true']").length > 0 ) {
-            require.async(['$','validate_methods'], function(Validate) {
+            require.async(['validate_methods','ajaxform'], function(Validate) {
                 new Validate.checked("[data-validate='true']",{
                     'debug': false,                 //进行调试模式（表单不提交）
                     'errorElement'  : 'label',       //用什么标签标记错误
@@ -39,23 +39,24 @@ define(function (require) {
                     'success': function (label) {},
                     'submitHandler': function(form){       //提交事件
                         var btn = $(form).find('[type="submit"]');
-                        btn.attr('disabled',true).addClass('disabled');
+                        btn.removeAttr('disabled').removeClass('disabled');
                         $(form).ajaxSubmit({
                             'dataType': 'json',
                             'timeout':   3000,
                             'error' : function(){
-                                return __alertTips({'msg' : '提交出错！'})
+                                return alertTips({'msg' : '提交出错！'})
+                                btn.attr('disabled',false).removeClass('disabled');
                             },
                             'success': function(json) {
                                 var n = Number(json.status);
                                 switch(n){
                                     case 1:
-                                        __alertTips({'msg' : json.message});
+                                        alertTips({'msg' : json.message});
                                         setTimeout('location.reload();',2000);
                                         break;
                                     default:
-                                        btn.attr('disabled',false).removeClass('disabled');
-                                        return __alertTips({'msg' : json.message})
+                                        btn.removeAttr('disabled').removeClass('disabled');
+                                        return alertTips({'msg' : json.message})
                                 }
                             }
                         }).submit(function() {return false;});
@@ -63,5 +64,10 @@ define(function (require) {
                 });
             });
         }
-    })
+    });
+
+    //自动补全
+
+
+
 })

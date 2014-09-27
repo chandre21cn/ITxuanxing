@@ -1,4 +1,4 @@
-define('lib/cookie',['jquery/jquery'],function(require) {
+define(function(require, exports, module) {
     var jQuery = require('$');
     (function($, document, undefined) {
         var pluses = /\+/g;

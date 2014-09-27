@@ -1,8 +1,8 @@
   /*
 	* http://autocomplete.jiani.info/doc/index.html
 	*/
-define("lib/autocomplete",["jquery/jquery"],function(require) {
-	var $ = require('jquery/jquery');
+define(function(require, exports, module) {
+	var $ = require('$');
 	(function(g) {
 	g.fn.extend({
 		"AutoComplete": function(q) {

@@ -7,9 +7,9 @@
  * This is licensed under the GNU LGPL, version 2.1 or later.
  * For details, see: http://www.gnu.org/licenses/lgpl-2.1.html
  */
-define("lib/selectbox",["jquery/jquery"],function(require) {
-    var $ = require('jquery/jquery');
-    var Popup = require('lib/popup');
+define(function(require, exports, module) {
+    var $ = require('$');
+    var Popup = require('./popup');
     var css = '';
 
 

@@ -7,8 +7,8 @@
  * This is licensed under the GNU LGPL, version 2.1 or later.
  * For details, see: http://www.gnu.org/licenses/lgpl-2.1.html
  */
-define("lib/popup",["jquery/jquery",],function(require) {
-    var $ = require('jquery/jquery');
+define(function(require, exports, module) {
+    var $ = require('$');
 
     var _count = 0;
     var _isIE6 = !('minWidth' in $('html')[0].style);

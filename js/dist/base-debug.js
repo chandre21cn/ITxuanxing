@@ -6,11 +6,30 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
     /*
      * 提示信息
      */
-    var __alertTips = function(options) {};
+    var alertTips = function(options) {
+        var defaults = {
+            msg: "操作成功！",
+            close: true
+        };
+        opt = $.extend(true, {}, defaults, options);
+        require.async([ "dialog-debug" ], function(dialog) {
+            var alertMsg = dialog({
+                //弹出消息提示
+                width: 200,
+                cancel: false,
+                content: '<div style="text-align:center;font-size:14px;">' + opt.msg + "</div>"
+            }).showModal();
+            if (opt.close == true) {
+                setTimeout(function() {
+                    alertMsg.remove();
+                }, 2e3);
+            }
+        });
+    };
     //表单验证
     $(function() {
         if ($("[data-validate='true']").length > 0) {
-            require.async([ "$", "validate_methods" ], function(Validate) {
+            require.async([ "validate_methods-debug", "ajaxform-debug" ], function(Validate) {
                 new Validate.checked("[data-validate='true']", {
                     debug: false,
                     //进行调试模式（表单不提交）
@@ -28,28 +47,29 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
                     submitHandler: function(form) {
                         //提交事件
                         var btn = $(form).find('[type="submit"]');
-                        btn.attr("disabled", true).addClass("disabled");
+                        btn.removeAttr("disabled").removeClass("disabled");
                         $(form).ajaxSubmit({
                             dataType: "json",
                             timeout: 3e3,
                             error: function() {
-                                return __alertTips({
+                                return alertTips({
                                     msg: "提交出错！"
                                 });
+                                btn.attr("disabled", false).removeClass("disabled");
                             },
                             success: function(json) {
                                 var n = Number(json.status);
                                 switch (n) {
                                   case 1:
-                                    __alertTips({
+                                    alertTips({
                                         msg: json.message
                                     });
                                     setTimeout("location.reload();", 2e3);
                                     break;
 
                                   default:
-                                    btn.attr("disabled", false).removeClass("disabled");
-                                    return __alertTips({
+                                    btn.removeAttr("disabled").removeClass("disabled");
+                                    return alertTips({
                                         msg: json.message
                                     });
                                 }
