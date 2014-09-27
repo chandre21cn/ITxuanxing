@@ -1,0 +1,127 @@
+#function {
+
+
+  //* 布局 */
+  // 宽高
+  .float(@position:left) {
+    float:@position;
+    _display:inline;
+  }
+  // 大小
+  .size(@width,@height) {
+    width: @width;
+    height:@height;
+  }
+
+  // 行内块
+  .inline-block() {
+    display: inline-block;
+    *display: inline;
+    *zoom:1;
+  }
+
+  // 清除浮动
+  .clearfix() {
+    *zoom:1;
+    &:before,
+    &:after {
+      display: table;
+      content: "";
+    }
+    &:after {
+      clear: both;
+    }
+  }
+
+  // 修正利用line-height文字垂直居中的浏览器兼容
+  // IE9要额外添加:root selector {line-height:@line-height + 2\0;}
+  .fix-line-height(@line-height) {
+    line-height:@line-height;
+    *line-height:@line-height + 2px;// IE6、7
+  }
+
+  //* 组件 */
+  // 文字选择
+  .noselect(@select:none) {
+    -webkit-user-select:@select;
+    -moz-user-select:@select;
+    user-select:@select;
+  }
+  .nooutline() {
+    outline:none;
+    *zoom:~"expression(function(el){el.style.zoom = 1;el.hideFocus = true;}(this))";
+  }
+  // 文字隐藏
+  .text-overflow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  // 半透明
+  .opacity(@opacity) {
+    opacity:@opacity;
+    filter:~"alpha(opacity="(@opacity * 100)~")";
+  }
+
+  // 渐变
+  .gradient(@_, @startColor, @endColor) {
+  }
+  .gradient(ver, @startColor, @endColor) {
+    //background-color: mix(@startColor, @endColor, 60%);
+    background-image: -moz-linear-gradient(top, @startColor, @endColor);
+    background-image: -webkit-linear-gradient(top, @startColor, @endColor);
+    background-image: linear-gradient(top, @startColor, @endColor);
+    background-repeat: repeat-x;
+    filter:~"progid:DXImageTransform.Microsoft.gradient(startColorstr=@{startColor}, endColorstr=@{endColor}, GradientType=0)";
+  }
+  .gradient(hor, @startColor, @endColor) {
+    //background-color: @endColor;
+    background-image: -moz-linear-gradient(left, @startColor, @endColor);
+    background-image: -webkit-linear-gradient(left, @startColor, @endColor);
+    background-image: linear-gradient(left, @startColor, @endColor);
+    background-repeat: repeat-x;
+    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=1)",@startColor,@endColor));
+  }
+  .gradient(@startColor, @endColor) {
+    #function > .gradient(ver, @startColor, @endColor);
+  }
+
+  // reset filters for IE
+  .reset-filter() {
+    filter: ~"progid:DXImageTransform.Microsoft.gradient(enabled = false)";
+  }
+  .arrow(@_, @width, @height, @color) {
+    #function > .size(0, 0);
+    border-style:solid;
+    border-color:transparent;
+    *font-size:0;
+    *line-height:0;
+    *overflow:hidden;
+    _border-color:tomato;
+    _filter:chroma(color=tomato);
+  }
+  .arrow(left, @width, @height, @color) {
+    border-width:@width @height;
+    border-right-color:@color;
+  }
+  .arrow(right, @width, @height, @color) {
+    border-width:@width @height;
+    border-left-color:@color;
+  }
+  .arrow(top, @width, @height, @color) {
+    border-width:@height @width;
+    border-bottom-color:@color;
+  }
+  .arrow(bottom, @width, @height, @color) {
+    border-width:@height @width;
+    border-top-color:@color;
+  }
+
+  //* CSS3 */
+  // 动画
+  .transition(@transition) {
+    -webkit-transition:@transition;
+    -moz-transition:@transition;
+    transition:@transition;
+  }
+}

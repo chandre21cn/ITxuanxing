@@ -1,0 +1,31 @@
+{
+    "family": "base",
+    "name": "common",
+    "version": "1",
+    "spm": {
+        "alias": {
+            "$":"sea-modules/jquery/jquery",
+            "ajaxform":"sea-modules/lib/ajaxform",
+            "AutoComplete" : "sea-modules/lib/autocomplete",
+            "cityselect":"sea-modules/lib/cityselect",
+            "datetimepicker":"sea-modules/lib/datetimepicker",
+            "dialog":"sea-modules/lib/dialog",
+            "livequery":"sea-modules/lib/livequery",
+            "placeholder":"sea-modules/lib/placeholder",
+            "popup":"sea-modules/lib/popup",
+            "scroll":"sea-modules/lib/scroll",
+            "selectbox":"sea-modules/lib/selectbox",
+            "switch":"sea-modules/lib/switch",
+            "template":"sea-modules/lib/template",
+            "validate":"sea-modules/lib/validate",
+            "cookie" : "sea-modules/lib/cookie",
+            "switchTab": "sea-modules/lib/switchTab",
+            "swfobject": "sea-modules/lib/swfobject",
+            "upload": "sea-modules/lib/upload/uploadify",
+            "editor8_2": "sea-modules/editor/8.2/redactor",
+            "editor": "sea-modules/editor/redactor",
+            "history": "sea-modules/lib/history"
+        },
+        "output": ["validate_methods.js","base.js"]
+    }
+}

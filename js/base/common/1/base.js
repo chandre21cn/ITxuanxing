@@ -1,0 +1,1 @@
+define("base/common/1/base",["sea-modules/jquery/jquery"],function(a){var b=a("sea-modules/jquery/jquery");a.async(["validate","./validate_methods"],function(){b("#form1").validate({submitHandler:function(a){alert("submitted"),a.submit()}})})});

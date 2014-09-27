@@ -1,0 +1,20 @@
+.form-item {
+  @h: 30px;
+  padding-left: 300px; line-height: @h; height: @h*2;
+  .label {
+    float:left; width: 290px; margin-left: -300px; text-align:right;
+  }
+  .text {
+    border:1px solid @border-color; line-height: 18px; height: 18px; padding: (@h - 18) / 2 5px;
+    outline: none; width: 200px;
+  }
+  .err {
+    #function > .inline-block; color:@red; font-size:12px; line-height:1.2;
+  }
+  .text.err {
+    border:1px solid @red;
+  }
+  .success {
+    #function > .inline-block;vertical-align:middle; color: @blue
+  }
+}
