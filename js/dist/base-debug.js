@@ -26,9 +26,9 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
             }
         });
     };
-    //表单验证
     $(function() {
-        if ($("[data-validate='true']").length > 0) {
+        //表单验证
+        if ($("[data-validate='true']").size() > 0) {
             require.async([ "validate_methods-debug", "ajaxform-debug" ], function(Validate) {
                 new Validate.checked("[data-validate='true']", {
                     debug: false,
@@ -52,10 +52,10 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
                             dataType: "json",
                             timeout: 3e3,
                             error: function() {
+                                btn.attr("disabled", false).removeClass("disabled");
                                 return alertTips({
                                     msg: "提交出错！"
                                 });
-                                btn.attr("disabled", false).removeClass("disabled");
                             },
                             success: function(json) {
                                 var n = Number(json.status);
@@ -78,6 +78,27 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
                             return false;
                         });
                     }
+                });
+            });
+        }
+        /*
+         *  自动补全
+         */
+        //行业
+        var AutoIndustry = $("#tags-industry");
+        if (AutoIndustry.size() > 0) {
+            require.async([ "tagsedit-debug" ], function() {
+                AutoIndustry.tagEditor({
+                    autocomplete: {
+                        data: gv.URL.GetIndustry,
+                        async: true,
+                        ajaxDataType: "xml"
+                    },
+                    delimiter: " "
+                });
+                $(document).on("click", ".industry-tags a", function() {
+                    var txt = $(this).text();
+                    AutoIndustry.tagEditor("addTag", txt);
                 });
             });
         }

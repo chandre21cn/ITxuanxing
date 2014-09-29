@@ -1,21 +1,22 @@
 seajs.config({
     base:'/js/',
     alias: {
-        "$":"jquery/jquery",
-        "ajaxform":"lib/ajaxform",
-        "AutoComplete" : "lib/autocomplete",
-        "datetimepicker":"lib/datetimepicker",
-        "dialog":"lib/dialog",
+        "$":"jquery/jquery",                    //
+        "ajaxform":"lib/ajaxform",              //
+        "AutoComplete" : "lib/autocomplete",       //
+        "tagsedit":"lib/tagsedit",              //
+        "popup":"lib/popup",                    //
+        "dialog":"lib/dialog",                  //
+        "validate":"lib/validate",              //
+        "validate_methods":"src/validate_methods",      //
         "flexslider":"lib/flexslider",
         "livequery":"lib/livequery",
-        "placeholder":"lib/placeholder",
-        "popup":"lib/popup",
+        "placeholder":"lib/placeholder",            //
         "scroll":"lib/scroll",
         "selectbox":"lib/selectbox",
         "switch":"lib/switch",
         "template":"lib/template",
-        "validate":"lib/validate",
-        "validate_methods":"src/validate_methods",
+
         "cookie" : "lib/cookie"
     },
     paths: {

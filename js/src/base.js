@@ -24,9 +24,10 @@ define(function (require) {
         });
     };
 
-    //表单验证
+
     $(function(){
-        if ( $("[data-validate='true']").length > 0 ) {
+        //表单验证
+        if ( $("[data-validate='true']").size() > 0 ) {
             require.async(['validate_methods','ajaxform'], function(Validate) {
                 new Validate.checked("[data-validate='true']",{
                     'debug': false,                 //进行调试模式（表单不提交）
@@ -44,8 +45,8 @@ define(function (require) {
                             'dataType': 'json',
                             'timeout':   3000,
                             'error' : function(){
-                                return alertTips({'msg' : '提交出错！'})
                                 btn.attr('disabled',false).removeClass('disabled');
+                                return alertTips({'msg' : '提交出错！'})
                             },
                             'success': function(json) {
                                 var n = Number(json.status);
@@ -61,13 +62,31 @@ define(function (require) {
                             }
                         }).submit(function() {return false;});
                     }
-                });
-            });
+                })
+            })
         }
+
+        /*
+         *  自动补全
+         */
+        //行业
+            var AutoIndustry = $('#tags-industry');
+            if ( AutoIndustry.size() > 0 ) {
+                require.async(['tagsedit'], function() {
+                    AutoIndustry.tagEditor({
+                        autocomplete: {
+                            'data': gv.URL.GetIndustry,
+                            'async': true,
+                            'ajaxDataType': 'xml'
+                        },
+                        delimiter: ' '
+                    });
+                    $(document).on('click','.industry-tags a',function(){
+                        var txt = $(this).text();
+                        AutoIndustry.tagEditor('addTag', txt);
+                    })
+                })
+            }
     });
-
-    //自动补全
-
-
 
 })
