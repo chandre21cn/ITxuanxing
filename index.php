@@ -13,7 +13,7 @@
     <link href="http://www.itxuanxing.com/css/header.css" rel="stylesheet" type="text/css" />
     <link href="http://www.itxuanxing.com/css/mainbody.css" rel="stylesheet" type="text/css" />
     <style>
-        .EditPics {width:380px; height:316px; float:left; vertical-align: middle; background: #F3F3F3; border:1px solid #ddd; margin-right:20px;overflow: hidden;}
+        .EditPics {width:380px;min-height:316px; *height:316px; float:left; vertical-align: middle; background: #F3F3F3; border:1px solid #ddd; margin-right:20px;}
         .EditPics img {width:100%;visibility: hidden;}
         .PreviewPics {width:160px; float:left;}
         .PreviewPics .preview1,.PreviewPics .preview2,.PreviewPics .preview3 {overflow: hidden; background: #F3F3F3; border:1px solid #DDD}
