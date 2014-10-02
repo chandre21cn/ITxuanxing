@@ -26,6 +26,6 @@
             "editor": "sea-modules/editor/redactor",
             "history": "sea-modules/lib/history"
         },
-        "output": ["validate_methods.js","base.js"]
+        "output": ["validate_methods.js","base.js","common.js"]
     }
 }

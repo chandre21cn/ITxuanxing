@@ -84,6 +84,13 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug" ], functi
         /*
          *  自动补全
          */
+        //邮箱
+        var autoemail = $("[autoemail='true']");
+        if (autoemail.size() > 0) {
+            require.async([ "./common-debug" ], function(Comm) {
+                Comm.AutoEmail("[autoemail='true']");
+            });
+        }
         //行业
         var AutoIndustry = $("#tags-industry");
         if (AutoIndustry.size() > 0) {
