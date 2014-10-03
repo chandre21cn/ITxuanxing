@@ -5,6 +5,26 @@ define(function(require, exports, module) {
     var $ = require('$');
 
     var common = {
+        /*
+         * 提示信息
+         */
+        'alertTips' : function(options) {
+            var defaults = {
+                'msg'       :  "操作成功！",
+                'close'     : true
+            };
+            opts = $.extend(true, {}, defaults, options);
+            require.async(['dialog'],function(dialog){
+                var alertMsg = dialog({       //弹出消息提示
+                    width: 200,
+                    cancel: false,
+                    content: '<div style=\"text-align:center;font-size:14px;\">'+ opts.msg +'</div>'
+                }).showModal();
+                if (opts.close==true) {
+                    setTimeout(function () {alertMsg.remove()},2000);
+                }
+            });
+        },
 
         /*
         * 邮箱自动补全
@@ -81,6 +101,127 @@ define(function(require, exports, module) {
             }).blur(function(){
                 autoComplete.hide();
             });
+        },
+
+
+        /*
+         * 图片上传与裁图
+         */
+        "CropPhoto" : function (options){
+            var defualts = {
+                title: "上传图片",
+                size: [160,160],
+                fileSize : "1024KB",
+                fileType : '*.gif; *.jpg; *.jpeg; *.png;',
+                success : function(url){}
+            };
+            var opts = $.extend({}, defualts, options);
+            require.async(['template','dialog','uploadify','jcrop','ajaxform'],function(template,dialog,uploadify,Jcrop,ajaxform) {
+                data = {
+                    title : opts.title,
+                    width:opts.size[0],
+                    height:opts.size[1],
+                    fileSize: opts.fileSize,
+                    fileType : opts.fileType
+                }
+                var html = template('PicsCrop', data);
+                var _UploadPics = dialog({
+                    title: '上传头像',
+                    content: html,
+                    width: 'auto'
+                }).showModal();
+
+                var jcrop_api, boundx, boundy;
+
+                function updateCoords(c){
+                    $('#crop-x').val(c.x);
+                    $('#crop-y').val(c.y);
+                    $('#crop-w').val(c.w);
+                    $('#crop-h').val(c.h);
+                };
+                function checkCoords(){
+                    if (parseInt($('#crop-w').val())) return true;
+                    alert('请选择图片上合适的区域');
+                    return false;
+                };
+                function updatePreview(c){
+                    if (parseInt(c.w) > 0){
+                        var rx = opts.size[0] / c.w;
+                        var ry = opts.size[1] / c.h;
+                        $('#crop-preview').css({
+                            width: Math.round(rx * boundx) + 'px',
+                            height: Math.round(ry * boundy) + 'px',
+                            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                            marginTop: '-' + Math.round(ry * c.y) + 'px'
+                        });
+                    }
+                };
+
+                //上传
+                $("#Pics-Upload").uploadify({
+                    'auto'				: true,
+                    'multi'				: false,
+                    'uploadLimit'		: 1,
+                    'buttonImage'		: gv.URL.Btn_picsupload,
+                    'height'			: 35,
+                    'width'				: 140,
+                    'removeCompleted'	: true,
+                    'swf'				: gv.URL.uploadifySwf,
+                    'uploader'			: gv.URL.PicsUpload,
+                    'fileTypeExts'		: opts.fileType,
+                    'fileSizeLimit'		: opts.fileSize,
+                    'onUploadSuccess' : function(file, data, response) {
+                        var msg = $.parseJSON(data);
+                        //裁图
+                        if( msg.result_code == 1 ){
+                            $("#crop-pics").val( msg.result_des );
+                            $("#crop-target").attr("src",msg.result_des);
+                            $("#crop-preview").attr("src",msg.result_des).css('visibility',"visible");
+                            $('#crop-target').Jcrop({
+                                    minSize: [opts.size[0],opts.size[1]],
+                                    setSelect: [0,0,opts.size[0],opts.size[1]],
+                                    onChange: updatePreview,
+                                    onSelect: updatePreview,
+                                    onSelect: updateCoords,
+                                    boxWidth : 380,
+                                    boxHeight: 316,
+                                    aspectRatio: opts.size[0] / opts.size[1]
+                                },
+                                function(){
+                                    // Use the API to get the real image size
+                                    var bounds = this.getBounds();
+                                    boundx = bounds[0];
+                                    boundy = bounds[1];
+                                    // Store the API in the jcrop_api variable
+                                    jcrop_api = this;
+                                });
+                        } else {
+                            alert('上传失败');
+                        }
+                    }
+                });
+
+                //提交
+                $("#CropForm").ajaxForm({
+                    'dataType': 'json',
+                    'beforeSubmit': function(){
+                        common.alertTips({'msg':'图像保存中，请稍后！'})
+                    },
+                    'error' : function(){
+                        common.alertTips({'msg':'操作失败，请稍后再试！'})
+                    },
+                    'success': function(json){
+                        if (json.status == 1){
+                            opts.success(json.picsurl); //回传上传的图片地址
+                            _UploadPics.remove();   //关闭图片上传窗口
+                            common.alertTips({'msg': json.message })
+                        } else {
+                            common.alertTips({'msg': json.message })
+                        }
+                    }
+                }).submit(function(){return false})
+            });
+
         }
     };
 

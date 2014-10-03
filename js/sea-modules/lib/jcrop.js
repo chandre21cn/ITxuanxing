@@ -3,7 +3,7 @@
  */
 define(function(require, exports, module) {
     var $ = require('$');
-        require('./jcrop.css');
+        require('./css/jcrop.css');
     /**
      * jquery.Jcrop.min.js v0.9.12 (build:20130202)
      * jQuery Image Cropping Plugin - released under MIT License
