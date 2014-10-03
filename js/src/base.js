@@ -75,7 +75,6 @@ define(function (require) {
         /*
          *   上传头像
          */
-
         $(document).on('click','.edit-avatar',function(){
             Comm.CropPhoto({
                 title:"上传头像",
@@ -86,6 +85,11 @@ define(function (require) {
                 }
             })
         })
+
+        /*
+         *   评分
+         */
+        new Comm.Raty('.star-scoring');
 
 
     });

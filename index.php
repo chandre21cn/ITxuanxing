@@ -13,6 +13,7 @@
     <link href="http://www.itxuanxing.com/css/header.css" rel="stylesheet" type="text/css" />
     <link href="http://www.itxuanxing.com/css/mainbody.css" rel="stylesheet" type="text/css" />
     <style>
+
         .FileUpload-Box {margin-bottom: 15px;}
         .FileUpload-Box .info {font-size:12px; color:#999; line-height:1.5}
         .EditPics {width:380px;height:316px; overflow: hidden; float:left; vertical-align: middle; background: #F3F3F3 url(img/nopics.png) no-repeat center; border:1px solid #ddd; margin-right:20px;}
@@ -23,9 +24,17 @@
         .dialog-btn { clear:both; padding-top: 15px; text-align: right;}
         .dialog-btn .btn-save {background: url(img/btn-save.png) no-repeat left top; border:0;padding:0;margin:0; width:70px; height:35px; cursor: pointer;}
         .dialog-btn .btn-save:hover{background-position: 0 -35px}
-        .jcrop-keymgr {
-            opacity: 0; filter:alpha(opacity="0");
-        }
+        .jcrop-keymgr {opacity: 0; filter:alpha(opacity="0");  }
+
+        /*评分*/
+            .star-small,.star-small .star-show,.star-big, .star-big .star-show, .star-small a , .star-big a
+            { display:inline-block; *display:inline;*zoom:1; width:95px; height:16px; vertical-align: middle; font-size:0; line-height:0;background: url(img/star.png) no-repeat 0 0;}
+            .star-small a {width:16px; height: 16px;padding-right: 3px;}
+            .star-small .star-show,.star-small a.on {background-position: 0 -16px;}
+            .star-big, .star-big .star-show,.star-big a {height:24px; width:143px;background: url(img/star_big.png) no-repeat 0 0;}
+            .star-big a {width:24px; height: 24px;padding-right: 4px;}
+            .star-big .star-show , .star-big a.on{background-position: 0 -24px}
+            .star-msg {height:20px; line-height:20px; display: inline-block; *display: inline;*zoom:1; font-size:12px; vertical-align: middle}
     </style>
 </head>
 <body>
@@ -34,6 +43,22 @@
 
     <div>
         <a href="javascript:void(0)" class="edit-avatar"><img src="http://www.cio.com.cn/avatar/big/3249" alt="" width="80" height="80" class="useravatar"></a>
+    </div>
+    <div>
+        <p>显示评分</p>
+        <div class="star-small"><p class="star-show" style="width:75%"></p></div>
+        <div class="star-big "><p class="star-show" style="width:28%"></p></div>
+        <p>评分</p>
+        <div class="star-small star-scoring"><a href="javascript:void(0)"></a><a href="javascript:void(0)"></a><a href="javascript:void(0)"></a><a href="javascript:void(0)"></a><a href="javascript:void(0)"></a><input type="hidden" name="star" value=""/></div>
+        <div class="star-big star-scoring">
+            <a href="javascript:void(0)" data-msg="不很理想"></a>
+            <a href="javascript:void(0)" data-msg="还凑合"></a>
+            <a href="javascript:void(0)" data-msg="一般"></a>
+            <a href="javascript:void(0)" data-msg="好"></a>
+            <a href="javascript:void(0)" data-msg="非常好"></a>
+            <input type="hidden" name="star" value=""/>
+        </div>
+
     </div>
 
     <?php require_once("footer.php"); ?>
