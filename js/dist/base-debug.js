@@ -38,12 +38,17 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
                             },
                             success: function(json) {
                                 var n = Number(json.status);
+                                var url = json.url;
                                 switch (n) {
                                   case 1:
                                     Comm.alertTips({
                                         msg: json.message
                                     });
-                                    setTimeout("location.reload();", 2e3);
+                                    if (url != "") {
+                                        window.location.href = url;
+                                    } else {
+                                        setTimeout("location.reload();", 2e3);
+                                    }
                                     break;
 
                                   default:
@@ -87,15 +92,85 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
          *   上传头像
          */
         $(document).on("click", ".edit-avatar", function() {
+            var $this = $(this);
             Comm.CropPhoto({
                 title: "上传头像",
                 size: [ 160, 160 ],
                 fileSize: "1024KB",
                 success: function(url) {
-                    $(".useravatar").attr("src", url);
+                    $this.find("img").attr("src", url);
+                    $this.find("input").val(url);
                 }
             });
         });
+        /*
+        *   重新绑定手机号
+        * */
+        //注册
+        $("#SetPhone").one("click", function() {
+            $("#Phone").removeAttr("disabled").removeClass("disabled");
+        });
+        /*
+        *   发送验证码
+        * */
+        // 倒计时
+        var wait = 60;
+        var __time = function(o) {
+            if (wait == 0) {
+                o.removeAttr("disabled").addClass("btn-orange");
+                o.html("重新发送");
+                wait = 60;
+            } else {
+                o.removeClass("btn-orange").attr("disabled", true);
+                o.html("重新发送(" + wait + ")");
+                wait--;
+                setTimeout(function() {
+                    __time(o);
+                }, 1e3);
+            }
+        };
+        $(document).on("click", "#SendCode", function() {
+            var that = $(this);
+            var phone = $("#Phone").val();
+            if (!/^0?(13|15|18|17|14)[0-9]{9}$/.test(phone)) {
+                return Comm.alertTips({
+                    msg: "请输入正确的手机号！"
+                });
+            }
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: gv.URL.SendCode,
+                data: {
+                    phone: phone
+                },
+                dataType: "JSON",
+                async: false,
+                error: function() {
+                    return Comm.alertTips({
+                        msg: "发送失败，请稍后再试！！"
+                    });
+                },
+                success: function(data) {
+                    var status = Number(json.status);
+                    if (status == 1) {
+                        Comm.alertTips({
+                            msg: "验证已发送至 " + phone
+                        });
+                        that.removeClass("btn-orange").attr("disabled", true);
+                        __time(that);
+                    } else {
+                        return Comm.alertTips({
+                            msg: json.message
+                        });
+                    }
+                }
+            });
+        });
+        /*
+         *   评分
+         */
+        new Comm.Raty(".star-scoring");
     });
 });
 
@@ -327,6 +402,49 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
                     }
                 }).submit(function() {
                     return false;
+                });
+            });
+        },
+        /*
+        *  评分
+        * */
+        Raty: function(selector) {
+            var $this = this.selector = $(selector);
+            $this.each(function() {
+                var that = $(this), hasMsg = false, showmsg = null;
+                that.find("a").data("msg") == undefined ? hasMsg = false : hasMsg = true;
+                if (hasMsg) {
+                    var w = that.outerWidth(), h = that.outerHeight(), t = that.offset().top, l = that.offset().left;
+                    showmsg = $('<div class="star-msg"></div>');
+                    showmsg.css({
+                        position: "absolute",
+                        top: (h - 20) / 2 + t + "px",
+                        left: w + l + "px",
+                        "z-index": 99,
+                        display: "none"
+                    });
+                    $("body").append(showmsg);
+                }
+                that.find("a").mouseenter(function() {
+                    var msg = $(this).data("msg");
+                    var a = $(this).index();
+                    that.find("a").slice(0, a + 1).addClass("on");
+                    that.find("a").slice(a + 1).removeClass("on");
+                    if (hasMsg) {
+                        showmsg.text(msg).show();
+                    }
+                }).mouseleave(function() {
+                    that.find("a").removeClass("on");
+                    var v = that.find("input").val();
+                    v == "" ? v = 0 : v = v;
+                    that.find("a").slice(0, v).addClass("on");
+                    if (hasMsg) {
+                        showmsg.hide();
+                    }
+                });
+                that.find("a").click(function() {
+                    var v = $(this).index();
+                    that.find("input").val(v + 1);
                 });
             });
         }

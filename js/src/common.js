@@ -267,8 +267,29 @@ define(function(require, exports, module) {
                     that.find("input").val( v + 1);
                 });
             });
-        }
+        },
 
+        /*
+        *   表单值转json串
+        * */
+        "serializeJson": function (selector) {
+            var that = this.selector = $(selector);
+            var serializeObj = {};
+            var array = that.serializeArray();
+            var str = that.serialize();
+            $(array).each(function () {
+                if (serializeObj[this.name]) {
+                    if ($.isArray(serializeObj[this.name])) {
+                        serializeObj[this.name].push(this.value);
+                    } else {
+                        serializeObj[this.name] = [serializeObj[this.name], this.value];
+                    }
+                } else {
+                    serializeObj[this.name] = this.value;
+                }
+            });
+            return serializeObj;
+        }
     };
 
 

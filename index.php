@@ -60,6 +60,28 @@
         </div>
 
     </div>
+    <form method="post" action="/user/regstep2" class="form1" data-validate="true" autosave="true" data-cookiename="login">
+        <div class="form-item">
+            <span class="label">姓名：</span>
+            <div>
+                <input type="text" name="name" class="text"  data-rule-required="true"  data-rule-repeat="true" data-rule-filter="true" data-rule-coe="true" data-msg-required="请填写真实姓名" />
+                <span class="form-tips">*</span>
+                <div class="show-msg">请填写真实姓名</div>
+            </div>
+        </div>
+        <div class="form-item">
+            <span class="label">手机号：</span>
+            <div>
+                <input type="text" name="phone" class="text"  data-rule-required="true" data-rule-mobile="true" data-msg-required="请填写您的真实手机号码"/>
+                <span class="form-tips">*</span>
+                <div class="show-msg">请填写真实的手机号码，只用于短信验证</div>
+            </div>
+        </div>
+        <div class="form-item">
+            <input type="submit" value="确定" class="save">
+        </div>
+
+    </form>
 
     <?php require_once("footer.php"); ?>
 </body>
