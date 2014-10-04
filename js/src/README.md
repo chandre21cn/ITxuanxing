@@ -100,6 +100,7 @@ cookie值为json字符串
 ```
 规则列表：
 ------------------
+``` text
 required:true                必输字段
 remote:"check.php"           使用ajax方法调用check.php验证输入值
 dateISO:true                 必须输入正确格式的日期(ISO)，例如：2009-06-23，1998/01/22 只验证格式，不验证有效性
@@ -138,3 +139,4 @@ url                                 请输入正确URL地址，如：http://www.
 idcard                              请输入正确的15、18位身份证号码
 image             图片文件            请上传png，jpg，bmp，gif，jpeg格式图片
 file               附件              请上传doc,ppt,xls,pdf,zip,rar格式文件
+```
