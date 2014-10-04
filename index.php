@@ -13,28 +13,6 @@
     <link href="http://www.itxuanxing.com/css/header.css" rel="stylesheet" type="text/css" />
     <link href="http://www.itxuanxing.com/css/mainbody.css" rel="stylesheet" type="text/css" />
     <style>
-
-        .FileUpload-Box {margin-bottom: 15px;}
-        .FileUpload-Box .info {font-size:12px; color:#999; line-height:1.5}
-        .EditPics {width:380px;height:316px; overflow: hidden; float:left; vertical-align: middle; background: #F3F3F3 url(img/nopics.png) no-repeat center; border:1px solid #ddd; margin-right:20px;}
-        .EditPics img {visibility: hidden;}
-        .PreviewPics { float:left;}
-        .PreviewPics .preview1 {overflow: hidden; background: #F3F3F3; border:1px solid #DDD}
-        .PreviewPics img {visibility: hidden;}
-        .dialog-btn { clear:both; padding-top: 15px; text-align: right;}
-        .dialog-btn .btn-save {background: url(img/btn-save.png) no-repeat left top; border:0;padding:0;margin:0; width:70px; height:35px; cursor: pointer;}
-        .dialog-btn .btn-save:hover{background-position: 0 -35px}
-        .jcrop-keymgr {opacity: 0; filter:alpha(opacity="0");  }
-
-        /*评分*/
-            .star-small,.star-small .star-show,.star-big, .star-big .star-show, .star-small a , .star-big a
-            { display:inline-block; *display:inline;*zoom:1; width:95px; height:16px; vertical-align: middle; font-size:0; line-height:0;background: url(img/star.png) no-repeat 0 0;}
-            .star-small a {width:16px; height: 16px;padding-right: 3px;}
-            .star-small .star-show,.star-small a.on {background-position: 0 -16px;}
-            .star-big, .star-big .star-show,.star-big a {height:24px; width:143px;background: url(img/star_big.png) no-repeat 0 0;}
-            .star-big a {width:24px; height: 24px;padding-right: 4px;}
-            .star-big .star-show , .star-big a.on{background-position: 0 -24px}
-            .star-msg {height:20px; line-height:20px; display: inline-block; *display: inline;*zoom:1; font-size:12px; vertical-align: middle}
     </style>
 </head>
 <body>
@@ -82,11 +60,11 @@
         </div>
 
     </form>
-
+    <p><a href="javascript:void(0);" data-uid="1" data-name="大志" class="btn-send-letter">发私信</a></p>
     <?php require_once("footer.php"); ?>
 </body>
 </html>
-
+<!-- 上传图像 -->
 <script id="PicsCrop" type="text/html">
     <div class="FileUpload-Box">
         <a href="javascript:void(0);" id="Pics-Upload">选择文件</a>
@@ -97,17 +75,32 @@
         <div class="PreviewPics">
             <p class="preview1" style="width:{{width}}px;height:{{height}}px"><img src="" id="crop-preview"/></p>
         </div>
-        <form action="crop.php" method="post" id="CropForm">
-            <div class="dialog-btn">
-                <input type="hidden" id="crop-pics" name="img" />
-                <input type="hidden" id="crop-x" name="x" />
-                <input type="hidden" id="crop-y" name="y" />
-                <input type="hidden" id="crop-w" name="w" />
-                <input type="hidden" id="crop-h" name="h" />
-                <input type="hidden" name="width" value="{{width}}"/>
-                <input type="hidden" name="height" value="{{height}}" />
-                <input type="submit" value="" class="btn-save"/>
-            </div>
-        </form>
     </div>
+    <form action="crop.php" method="post" id="CropForm">
+        <div class="dialog-btn">
+            <input type="hidden" id="crop-pics" name="img" />
+            <input type="hidden" id="crop-x" name="x" />
+            <input type="hidden" id="crop-y" name="y" />
+            <input type="hidden" id="crop-w" name="w" />
+            <input type="hidden" id="crop-h" name="h" />
+            <input type="hidden" name="width" value="{{width}}"/>
+            <input type="hidden" name="height" value="{{height}}" />
+            <input type="submit" value="" class="btn-save"/>
+        </div>
+    </form>
+</script>
+<!--发私信-->
+<script id="SendLetter" type="text/html">
+    <form action="crop.php" method="post" id="SendLetterForm">
+        <div class="form-item textarea-item form-nolabel">
+            <div class="textarea-box">
+                <textarea name="cont" data-rule-required="true"  data-rule-repeat="true" data-rule-filter="true" data-rule-rangelength="5,255" data-msg-required="请填写私信内容" data-msg-rangelength="内容必须大于 5 且 小于 255 个字符"></textarea>
+            </div>
+            <div class="show-msg">请输入私信内容（5-255个字符）</div>
+        </div>
+        <div class="dialog-btn">
+            <input type="hidden" name="uid" value="{{uid}}" />
+            <input type="submit" value="" class="btn-send"/>
+        </div>
+    </form>
 </script>

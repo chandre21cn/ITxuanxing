@@ -77,7 +77,7 @@ define(function (require) {
                 })
             }
 
-        //能用补全方法
+        //通用自动补全方法
         var Auto_Complete = $('[autocomplete="true"]');
         if ( Auto_Complete.size() > 0 ) {
             var url = Auto_Complete.data("complete-url");
@@ -187,6 +187,61 @@ define(function (require) {
             })
         }
 
+        /*
+        *  发私信
+        * */
+
+        $(document).on('click','.btn-send-letter',function(){
+            var that = $(this),
+                data  = {
+                    "uid": that.data('uid'),
+                    "name": that.data('name')
+                };
+            require.async(['template','dialog','./validate_methods','ajaxform'], function(template,dialog,Validate,ajaxform) {
+                var html = template('SendLetter', data);
+                var _SendLetter = dialog({
+                    title: '发私信给：' + data.name,
+                    content: html,
+                    width: '400'
+                }).showModal();
+
+                new Validate.checked("#SendLetterForm",{
+                    'errorElement'  : 'label',       //用什么标签标记错误
+                    'errorClass'   : "err",         //指定错误提示的css类名
+                    'ignore': null,                   //对某些元素不进行验证
+                    'errorPlacement' : function (error, element) {    //更改错误信息显示的位置
+                        element.parent().parent().find('.show-msg').html(error)
+                    },
+                    'success': function (label) {},
+                    'submitHandler': function(form){       //提交事件
+                        var btn = $(form).find('[type="submit"]');
+                        btn.removeAttr('disabled').removeClass('disabled');
+                        $(form).ajaxSubmit({
+                            'dataType': 'json',
+                            'timeout':   3000,
+                            'error' : function(){
+                                btn.attr('disabled',false).removeClass('disabled');
+                                return Comm.alertTips({'msg' : '提交出错！'})
+                            },
+                            'success': function(json) {
+                                var n = Number(json.status);
+                                var url = json.url;
+                                switch(n){
+                                    case 1:
+                                        _SendLetter.remove();   //关闭窗口
+                                        return Comm.alertTips({'msg' : json.message});
+                                        break;
+                                    default:
+                                        btn.removeAttr('disabled').removeClass('disabled');
+                                        return Comm.alertTips({'msg' : json.message})
+                                }
+                            }
+                        }).submit(function() {return false;});
+                    }
+                })
+
+            })
+        })
 
 
     });

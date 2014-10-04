@@ -70,6 +70,16 @@ autocomplete="true" data-complete-url = "请求地址"
         })
     });
 ```
+发私信
+===================
+```text
+    使用用说明：
+    <a href="javascript:void(0);" data-uid="1" data-name="username" class="btn-send-letter">发私信</a>
+    data-uid    接收人ID号
+    data-name   接收人昵称
+    class="btn-send-letter"     事件触发
+```
+
 
 
 显示评分
