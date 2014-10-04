@@ -72,7 +72,7 @@
         <div class="form-item">
             <span class="label">手机号：</span>
             <div>
-                <input type="text" name="phone" class="text"  data-rule-required="true" data-rule-mobile="true" data-msg-required="请填写您的真实手机号码"/>
+                <input type="text" name="phone" class="text"  autocomplete="true" data-complete-url = "/test/get_industry.php"/>
                 <span class="form-tips">*</span>
                 <div class="show-msg">请填写真实的手机号码，只用于短信验证</div>
             </div>

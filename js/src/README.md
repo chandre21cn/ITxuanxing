@@ -27,6 +27,13 @@ cookie值为json字符串
         </div>
     </form>
 ```
+自动补全
+=================
+说明：
+input 上添加
+autocomplete="true" data-complete-url = "请求地址"
+
+
 
 上传头像
 =================

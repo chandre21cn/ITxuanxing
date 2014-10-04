@@ -77,6 +77,22 @@ define(function (require) {
                 })
             }
 
+        //能用补全方法
+        var Auto_Complete = $('[autocomplete="true"]');
+        if ( Auto_Complete.size() > 0 ) {
+            var url = Auto_Complete.data("complete-url");
+            require.async(['AutoComplete'], function() {
+                Auto_Complete.AutoComplete({
+                    'data': url,
+                    'async': true,
+                    'ajaxDataType': 'xml',
+                    'maxHeight': 300
+                })
+            });
+        }
+
+
+
         /*
          *   上传头像
          */
