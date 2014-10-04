@@ -28,6 +28,32 @@ cookie值为json字符串
     </form>
 ```
 
+上传头像
+=================
+注意： class="edit-avatar" 为事件触发
+
+```html
+    <a href="javascript:void(0)" class="edit-avatar">
+        <img src="" alt="" width="80" height="80" />
+        <input type="hidden" name="avatar" />
+    </a>
+```
+
+```javascript
+    $(document).on('click','.edit-avatar',function(){
+        var $this = $(this);
+        Comm.CropPhoto({
+            title:"上传头像",
+            size:[160,160],
+            fileSize: "1024KB",
+            success: function(url){
+                $this.find('img').attr('src',url);
+                $this.find('input').val(url);
+            }
+        })
+    });
+```
+
 
 显示评分
 ===================
