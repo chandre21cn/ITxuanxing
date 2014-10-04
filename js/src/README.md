@@ -30,10 +30,20 @@ cookie值为json字符串
 自动补全
 =================
 说明：
+``` text
 input 上添加
 autocomplete="true" data-complete-url = "请求地址"
-
-
+```
+返回xml 数据格式
+```text
+    <data>
+    	<item>One</item>
+    	<item>Two</item>
+    	<item>Three</item>
+    	<item>Four</item>
+    	<item>Five</item>
+    </data>
+```
 
 上传头像
 =================
