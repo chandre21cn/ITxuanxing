@@ -8,7 +8,7 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
     $(function() {
         //表单验证
         if ($("[data-validate='true']").size() > 0) {
-            require.async([ "validate_methods-debug", "ajaxform-debug" ], function(Validate) {
+            require.async([ "./validate_methods-debug", "ajaxform-debug" ], function(Validate) {
                 new Validate.checked("[data-validate='true']", {
                     debug: false,
                     //进行调试模式（表单不提交）
@@ -70,7 +70,7 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
          */
         //邮箱
         Comm.AutoEmail("[autoemail='true']");
-        //行业
+        //行业 带默认选项
         var AutoIndustry = $("#tags-industry");
         if (AutoIndustry.size() > 0) {
             require.async([ "tagsedit-debug" ], function() {
@@ -171,6 +171,21 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
          *   评分
          */
         new Comm.Raty(".star-scoring");
+        /*
+        * 表单自动保存
+        * */
+        if ($('[autosave="true"]').size() > 0) {
+            require.async([ "cookie-debug" ], function() {
+                var SaveForm = function() {
+                    var cookiename = $('[autosave="true"]').data("cookiename");
+                    var val = JSON.stringify(Comm.serializeJson('[autosave="true"]'));
+                    $.cookie(cookiename, val, {
+                        path: "/"
+                    });
+                };
+                setInterval(SaveForm, 1e4);
+            });
+        }
     });
 });
 
@@ -447,6 +462,27 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
                     that.find("input").val(v + 1);
                 });
             });
+        },
+        /*
+        *   表单值转json串
+        * */
+        serializeJson: function(selector) {
+            var that = this.selector = $(selector);
+            var serializeObj = {};
+            var array = that.serializeArray();
+            var str = that.serialize();
+            $(array).each(function() {
+                if (serializeObj[this.name]) {
+                    if ($.isArray(serializeObj[this.name])) {
+                        serializeObj[this.name].push(this.value);
+                    } else {
+                        serializeObj[this.name] = [ serializeObj[this.name], this.value ];
+                    }
+                } else {
+                    serializeObj[this.name] = this.value;
+                }
+            });
+            return serializeObj;
         }
     };
     module.exports = common;
