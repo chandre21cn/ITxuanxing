@@ -1,13 +1,13 @@
 表单自动保存到cookie
 ===================
+``` text
 form 属性
-
     autosave="true" 表单是否自动保存，true为表保存，不添加或为其它则不自动保存
     data-cookiename="cookiename"     此属性必须和autosave同时使用，属性值为保存的cookie name
 
 cookie值为json字符串如：
     {"name":"yourname","tel":"13801099102","sex":"男"，"like[]",["购物","电影","运动"]}
-
+```
 ``` html
     <form method="post" action="/user/regstep2" class="form1" data-validate="true" autosave="true" data-cookiename="userreg">
         <div class="form-item">
@@ -33,12 +33,14 @@ cookie值为json字符串如：
 <div class="star-big "><p class="star-show" style="width:28%"></p></div>
 ```
 打分
+``` text
 注意：
     star-small（小）
     star-big （大）
     <input type="hidden" name="star" value=""/>（放在最后）
     data-msg="提示语"  不添加则无提示语
 不带提示
+```
 ``` html
 <div class="star-small star-scoring">
     <a href="javascript:void(0)"></a>
