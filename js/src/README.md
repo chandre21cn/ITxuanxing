@@ -1,3 +1,29 @@
+input 快速输入提示
+=================
+input 标签添加以下属性
+
+静态数据说明：
+```text
+    data-tips="true"            使用快速输入
+    data-amount='1'             可选标签数量，默认1
+    data-types='manufacturer'   javascript全局变量名
+```
+动态数据说明：
+```text
+    data-tips="ajax"                使用动态数据输入
+    data-amount='1'                 可选标签数量，默认1
+    data-equalto='#manufacturer'    可选项，取其它input内的数据值作为 ajax 的传参
+    data-url="/source/test/get_industry.php"            数据 POST 地址， 返回json值
+```
+数据格式
+```javascript
+    {
+        status : 1,         // 动态数据此参数为必传值
+        title : "标题",       //可选
+        text  : ['数据一','数据二','数据三']
+    }
+```
+
 表单自动保存到cookie
 ===================
 form 属性
@@ -44,6 +70,8 @@ autocomplete="true" data-complete-url = "请求地址"
     	<item>Five</item>
     </data>
 ```
+
+
 
 上传头像
 =================

@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 		}
 	});
 	var f = function(q, r) {
+
 		this.option = g.extend(false, {
 			"width": 280,
 			"maxHeight": null,
@@ -43,8 +44,8 @@ define(function(require, exports, module) {
 			"onerror": null
 		},
 		r);
-		b.apply(this, [q]);
-		j.apply(this)
+        b.apply(this, [q]);
+		j.apply(this);
 	};
 	var b = function(q) {
 		var r = this;

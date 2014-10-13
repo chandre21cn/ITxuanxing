@@ -27,6 +27,7 @@ define(function(require, exports, module) {
             coe:   /^(([A-Za-z]+\s?)*[A-Za-z]|([\u4e00-\u9fa5]+)){2,}$/,
             //内容至少应该包含一个汉字或英文字母
             cae: /^([A-Za-z\u4e00-\u9fa5]+\s?)*[A-Za-z\u4e00-\u9fa5]$/,
+
             //用户输入的内容中不能包含“测试”、“学生”、“某”、“保密“、“注册中”、自营、XXOO、游民
             filter : /(?!.*\u6d4b\u8bd5|.*\u5b66\u751f|.*\u4fdd\u5bc6|.*\u6ce8\u518c\u4e2d|.*\u81ea\u8425|.*\u6e38\u6c11|.*\u67d0|.*XXOO|.*xxoo)^.*$/,
             //单一字符或汉字连续重复的次数不能超过3次;

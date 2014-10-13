@@ -69,7 +69,9 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
          *  自动补全
          */
         //邮箱
-        Comm.AutoEmail("[autoemail='true']");
+        Comm.AutoEmail("[autoemail='true']", {
+            data: gv.autoemail
+        });
         //行业 带默认选项
         var AutoIndustry = $("#tags-industry");
         if (AutoIndustry.size() > 0) {
@@ -89,26 +91,27 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
             });
         }
         //通用自动补全方法
-        var Auto_Complete = $('[autocomplete="true"]');
-        if (Auto_Complete.size() > 0) {
-            var url = Auto_Complete.data("complete-url");
+        $(document).on("focus", '[autocomplete="true"]', function() {
+            var that = $(this);
             require.async([ "AutoComplete-debug" ], function() {
-                Auto_Complete.AutoComplete({
-                    data: url,
-                    async: true,
+                that.AutoComplete({
+                    data: that.data("complete-url"),
                     ajaxDataType: "xml",
                     maxHeight: 300
                 });
             });
-        }
+        });
         /*
          *   上传头像
          */
         $(document).on("click", ".edit-avatar", function() {
-            var $this = $(this);
+            var $this = $(this), uid = $this.data("uid");
             Comm.CropPhoto({
                 title: "上传头像",
                 size: [ 160, 160 ],
+                data: {
+                    userid: uid
+                },
                 fileSize: "1024KB",
                 success: function(url) {
                     $this.find("img").attr("src", url);
@@ -130,11 +133,11 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
         var wait = 60;
         var __time = function(o) {
             if (wait == 0) {
-                o.removeAttr("disabled").addClass("btn-orange");
+                o.addClass("btn-orange");
                 o.html("重新发送");
                 wait = 60;
             } else {
-                o.removeClass("btn-orange").attr("disabled", true);
+                o.removeClass("btn-orange");
                 o.html("重新发送(" + wait + ")");
                 wait--;
                 setTimeout(function() {
@@ -142,8 +145,7 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
                 }, 1e3);
             }
         };
-        $(document).on("click", "#SendCode", function() {
-            var that = $(this);
+        var __SendCode = function(that) {
             var phone = $("#Phone").val();
             if (!/^0?(13|15|18|17|14)[0-9]{9}$/.test(phone)) {
                 return Comm.alertTips({
@@ -165,16 +167,59 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
                     });
                 },
                 success: function(data) {
-                    var status = Number(json.status);
+                    var status = Number(data.status);
                     if (status == 1) {
                         Comm.alertTips({
-                            msg: "验证已发送至 " + phone
+                            msg: data.message
                         });
-                        that.removeClass("btn-orange").attr("disabled", true);
+                        that.removeClass("btn-orange");
                         __time(that);
                     } else {
                         return Comm.alertTips({
-                            msg: json.message
+                            msg: data.message
+                        });
+                    }
+                }
+            });
+        };
+        $(document).on("click", "#SendCode", function() {
+            var that = $(this);
+            if (that.hasClass("btn-orange")) {
+                return __SendCode(that);
+            }
+            return false;
+        });
+        /*
+        * 表单输入框默认提示
+        * */
+        //静态数据
+        $(document).on("focus", '[data-tips="true"]', function() {
+            var that = $(this), amount = that.data("amount"), types = that.data("types");
+            new Comm.TipsInput(that, {
+                data: eval(types),
+                Amount: amount
+            });
+        });
+        //动态数据
+        $(document).on("focus", '[data-tips="ajax"]', function() {
+            var that = $(this), amount = that.data("amount"), equalto = $(that.data("equalto")).val(), url = that.data("url"), PostData = {
+                keyword: ""
+            };
+            if (equalto != undefined || equalto != "") {
+                PostData = {
+                    keyword: equalto
+                };
+            }
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: PostData,
+                dataType: "json",
+                success: function(json) {
+                    if (json.status == 1) {
+                        new Comm.TipsInput(that, {
+                            data: json,
+                            Amount: amount
                         });
                     }
                 }
@@ -184,6 +229,14 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
          *   评分
          */
         new Comm.Raty(".star-scoring");
+        /*
+        *   下拉选项
+        * */
+        if ($("select").size() > 0) {
+            require.async([ "selectbox-debug" ], function(selectbox) {
+                selectbox($("select"));
+            });
+        }
         /*
         * 表单自动保存
         * */
@@ -239,22 +292,21 @@ define("base/common/1/base-debug", [ "sea-modules/jquery/jquery-debug", "sea-mod
                                     msg: "提交出错！"
                                 });
                             },
-                            success: function(json) {
-                                var n = Number(json.status);
-                                var url = json.url;
+                            success: function(data) {
+                                var n = Number(data.status);
                                 switch (n) {
                                   case 1:
                                     _SendLetter.remove();
                                     //关闭窗口
                                     return Comm.alertTips({
-                                        msg: json.message
+                                        msg: data.message
                                     });
                                     break;
 
                                   default:
                                     btn.removeAttr("disabled").removeClass("disabled");
                                     return Comm.alertTips({
-                                        msg: json.message
+                                        msg: data.message
                                     });
                                 }
                             }
@@ -381,6 +433,7 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
             var defualts = {
                 title: "上传图片",
                 size: [ 160, 160 ],
+                data: [],
                 fileSize: "1024KB",
                 fileType: "*.gif; *.jpg; *.jpeg; *.png;",
                 success: function(url) {}
@@ -429,10 +482,12 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
                     auto: true,
                     multi: false,
                     uploadLimit: 1,
+                    formData: opts.data,
                     buttonImage: gv.URL.Btn_picsupload,
                     height: 35,
                     width: 140,
                     removeCompleted: true,
+                    fileObjName: "file",
                     swf: gv.URL.uploadifySwf,
                     uploader: gv.URL.PicsUpload,
                     fileTypeExts: opts.fileType,
@@ -440,12 +495,12 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
                     onUploadSuccess: function(file, data, response) {
                         var msg = $.parseJSON(data);
                         //裁图
-                        if (msg.result_code == 1) {
-                            $("#crop-pics").val(msg.result_des);
-                            $("#crop-target").attr("src", msg.result_des);
-                            $("#crop-preview").attr("src", msg.result_des).css("visibility", "visible");
+                        if (msg.status == 1) {
+                            $("#crop-pics").val(msg.filelink);
+                            $("#crop-target").attr("src", msg.filelink);
+                            $("#crop-preview").attr("src", msg.filelink).css("visibility", "visible");
+                            $("#codesrc").val(msg.codesrc);
                             $("#crop-target").Jcrop({
-                                minSize: [ opts.size[0], opts.size[1] ],
                                 setSelect: [ 0, 0, opts.size[0], opts.size[1] ],
                                 onChange: updatePreview,
                                 onSelect: updatePreview,
@@ -462,7 +517,9 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
                                 jcrop_api = this;
                             });
                         } else {
-                            alert("上传失败");
+                            common.alertTips({
+                                msg: msg.message
+                            });
                         }
                     }
                 });
@@ -507,39 +564,105 @@ define("base/common/1/common-debug", [ "sea-modules/jquery/jquery-debug" ], func
             $this.each(function() {
                 var that = $(this), hasMsg = false, showmsg = null;
                 that.find("a").data("msg") == undefined ? hasMsg = false : hasMsg = true;
-                if (hasMsg) {
+                var __showmsg = function(text) {
                     var w = that.outerWidth(), h = that.outerHeight(), t = that.offset().top, l = that.offset().left;
-                    showmsg = $('<div class="star-msg"></div>');
+                    showmsg = $('<div class="star-msg">' + text + "</div>");
                     showmsg.css({
                         position: "absolute",
                         top: (h - 20) / 2 + t + "px",
                         left: w + l + "px",
                         "z-index": 99,
                         display: "none"
-                    });
+                    }).show();
                     $("body").append(showmsg);
-                }
+                };
                 that.find("a").mouseenter(function() {
                     var msg = $(this).data("msg");
                     var a = $(this).index();
-                    that.find("a").slice(0, a + 1).addClass("on");
-                    that.find("a").slice(a + 1).removeClass("on");
+                    that.find("a").slice(0, a + 1).addClass("action");
+                    that.find("a").slice(a + 1).removeClass("action");
                     if (hasMsg) {
-                        showmsg.text(msg).show();
+                        __showmsg(msg);
                     }
                 }).mouseleave(function() {
-                    that.find("a").removeClass("on");
+                    that.find("a").removeClass("action");
                     var v = that.find("input").val();
                     v == "" ? v = 0 : v = v;
-                    that.find("a").slice(0, v).addClass("on");
+                    that.find("a").slice(0, v).addClass("action");
                     if (hasMsg) {
-                        showmsg.hide();
+                        showmsg.remove();
                     }
                 });
                 that.find("a").click(function() {
                     var v = $(this).index();
                     that.find("input").val(v + 1);
                 });
+            });
+        },
+        /*
+         *  快速输入提示
+         * */
+        TipsInput: function(selector, options) {
+            var $this = this.selector = $(selector);
+            var defaults = {
+                data: {
+                    title: "行业",
+                    text: [ "it", "intel", "IBM" ]
+                },
+                AutoClose: true,
+                Amount: 1
+            };
+            $this.each(function() {
+                var opts = $.extend({}, defaults, options);
+                var that = $(this), ShowTips = null;
+                var Show = function(html) {
+                    var w = that.outerWidth(), h = that.outerHeight(), t = that.offset().top, l = that.offset().left;
+                    ShowTips = $('<div class="tips-input"><div class="arrow-left"><span></span><em></em></div>' + html + "</div>");
+                    ShowTips.css({
+                        position: "absolute",
+                        top: t + "px",
+                        left: w + l + 20 + "px",
+                        "z-index": 99,
+                        display: "none"
+                    }).show();
+                    $("body").append(ShowTips);
+                };
+                var data = opts.data, html = "";
+                if (data.title) {
+                    html += "<p>" + data.title + "</p>";
+                }
+                var text = data.text;
+                for (j in text) {
+                    html += '<a href="javascript:void(0)">' + text[j] + "</a>";
+                }
+                Show(html);
+                $("a", ShowTips).on("click", function() {
+                    var val = that.val().split(" ");
+                    var v = $(this).html();
+                    for (var i = 0; i < val.length; i++) {
+                        if (val[i] == "" || typeof val[i] == "undefined") {
+                            val.splice(i, 1);
+                            i = i - 1;
+                        }
+                    }
+                    if ($.inArray(v, val) > -1) {
+                        return false;
+                    }
+                    if (Number(opts.Amount) === 1) {
+                        return that.val(v).focus();
+                    } else if (val.length === Number(opts.Amount)) {
+                        return false;
+                    }
+                    val.push(v);
+                    that.val(val.join(" ")).focus();
+                });
+                if (opts.AutoClose) {
+                    that.blur(function() {
+                        setTimeout(function() {
+                            ShowTips.remove();
+                        }, 120);
+                    });
+                }
             });
         },
         /*

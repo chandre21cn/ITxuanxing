@@ -111,6 +111,7 @@ define(function(require, exports, module) {
             var defualts = {
                 title: "上传图片",
                 size: [160,160],
+                data :  [],
                 fileSize : "1024KB",
                 fileType : '*.gif; *.jpg; *.jpeg; *.png;',
                 success : function(url){}
@@ -162,10 +163,12 @@ define(function(require, exports, module) {
                     'auto'				: true,
                     'multi'				: false,
                     'uploadLimit'		: 1,
+                    'formData'           : opts.data,
                     'buttonImage'		: gv.URL.Btn_picsupload,
                     'height'			: 35,
                     'width'				: 140,
                     'removeCompleted'	: true,
+                    'fileObjName'       : "file",
                     'swf'				: gv.URL.uploadifySwf,
                     'uploader'			: gv.URL.PicsUpload,
                     'fileTypeExts'		: opts.fileType,
@@ -173,12 +176,12 @@ define(function(require, exports, module) {
                     'onUploadSuccess' : function(file, data, response) {
                         var msg = $.parseJSON(data);
                         //裁图
-                        if( msg.result_code == 1 ){
-                            $("#crop-pics").val( msg.result_des );
-                            $("#crop-target").attr("src",msg.result_des);
-                            $("#crop-preview").attr("src",msg.result_des).css('visibility',"visible");
+                        if( msg.status == 1 ){
+                            $("#crop-pics").val( msg.filelink );
+                            $("#crop-target").attr("src",msg.filelink);
+                            $("#crop-preview").attr("src",msg.filelink).css('visibility',"visible");
+                            $("#codesrc").val(msg.codesrc);
                             $('#crop-target').Jcrop({
-                                    minSize: [opts.size[0],opts.size[1]],
                                     setSelect: [0,0,opts.size[0],opts.size[1]],
                                     onChange: updatePreview,
                                     onSelect: updatePreview,
@@ -196,7 +199,7 @@ define(function(require, exports, module) {
                                     jcrop_api = this;
                                 });
                         } else {
-                            alert('上传失败');
+                            common.alertTips({'msg': msg.message })
                         }
                     }
                 });
@@ -234,38 +237,108 @@ define(function(require, exports, module) {
                     hasMsg = false,
                     showmsg = null;
                 that.find('a').data('msg') == undefined ? hasMsg = false : hasMsg = true;
-                if (hasMsg) {
+                var __showmsg =  function (text) {
                     var w = that.outerWidth(),
                         h = that.outerHeight(),
                         t = that.offset().top,
                         l = that.offset().left;
-                    showmsg = $('<div class=\"star-msg\"></div>');
-                    showmsg.css({
-                        'position': 'absolute',
-                        'top': ( h - 20 ) / 2 + t + 'px',
-                        'left': w + l + 'px',
-                        'z-index': 99,
-                        'display': "none"
-                    });
+                        showmsg = $('<div class=\"star-msg\">'+ text +'</div>');
+                        showmsg.css({
+                            'position': 'absolute',
+                            'top': ( h - 20 ) / 2 + t + 'px',
+                            'left': w + l + 'px',
+                            'z-index': 99,
+                            'display': "none"
+                        }).show();
                     $("body").append(showmsg);
                 };
                 that.find("a").mouseenter(function(){
                     var msg = $(this).data("msg");
                     var a = $(this).index();
-                    that.find('a').slice(0, a + 1).addClass('on');
-                    that.find('a').slice(a + 1).removeClass("on");
-                    if (hasMsg) { showmsg.text(msg).show(); }
+                    that.find('a').slice(0, a + 1).addClass('action');
+                    that.find('a').slice(a + 1).removeClass("action");
+                    if (hasMsg) { __showmsg(msg); }
                 }).mouseleave(function(){
-                    that.find('a').removeClass('on');
+                    that.find('a').removeClass('action');
                     var v = that.find("input").val();
                     v == '' ? v = 0 : v = v;
-                    that.find('a').slice(0, v).addClass('on')
-                    if (hasMsg) { showmsg.hide(); }
+                    that.find('a').slice(0, v).addClass('action')
+                    if (hasMsg) { showmsg.remove(); }
                 });
                 that.find("a").click(function(){
                     var v = $(this).index();
                     that.find("input").val( v + 1);
                 });
+            });
+        },
+
+        /*
+         *  快速输入提示
+         * */
+        "TipsInput" : function(selector,options) {
+            var $this = this.selector = $(selector);
+            var  defaults = {
+                'data' : {
+                        'title':'行业',
+                        'text': ['it','intel','IBM']
+                    },
+                AutoClose : true,
+                Amount : 1
+            };
+
+            $this.each(function(){
+                var opts = $.extend({}, defaults, options);
+                var that = $(this),
+                    ShowTips = null;
+                var Show  =  function (html) {
+                    var w = that.outerWidth(),
+                        h = that.outerHeight(),
+                        t = that.offset().top,
+                        l = that.offset().left;
+                    ShowTips = $('<div class=\"tips-input\"><div class=\"arrow-left\"><span></span><em></em></div>'+ html +'</div>');
+                    ShowTips.css({
+                        'position': 'absolute',
+                        'top':  t + 'px',
+                        'left': w + l + 20 + 'px',
+                        'z-index': 99,
+                        'display': "none"
+                    }).show();
+                    $("body").append(ShowTips);
+                };
+                var data = opts.data,html = '';
+                if (data.title) { html += "<p>"+ data.title +"</p>" };
+                var text = data.text;
+                for (j in text) {
+                    html += '<a href="javascript:void(0)">'+ text[j] +'</a>';
+                }
+
+                Show(html);
+                $('a',ShowTips).on('click',function(){
+                    var val = that.val().split(" ");
+                    var v  = $(this).html();
+                    for (var i = 0 ; i<val.length; i++) {
+                        if(val[i] == "" || typeof(val[i]) == "undefined") {
+                            val.splice(i,1);
+                            i= i-1;
+                        }
+                    }
+                    if ( $.inArray(v,val) > -1 ) { return false }
+                    if ( Number(opts.Amount) === 1 ) {
+                        return that.val(v).focus()
+                    } else if ( val.length === Number(opts.Amount) ){
+                        return false;
+                    }
+                    val.push(v);
+                    that.val(val.join(" ")).focus()
+
+                });
+
+                if (opts.AutoClose) {
+                    that.blur(function(){
+                        setTimeout(function () {ShowTips.remove()},120);
+                    })
+
+                }
             });
         },
 
